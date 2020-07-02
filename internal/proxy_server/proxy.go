@@ -2,11 +2,11 @@ package proxy_server
 
 import (
 	"github.com/peterhellberg/link"
+	"github.com/rs/zerolog/log"
 	"github.com/terrycain/aws_ecr_proxy/internal/ecr_token"
 	"io"
 	"net/http"
 	"net/url"
-	"github.com/rs/zerolog/log"
 )
 
 type WebData struct {
@@ -81,7 +81,7 @@ func (d *WebData) CopyHeaders(src *http.Request, dst *http.Request) {
 		}
 
 	}
-	dst.Header.Add("Authorization", "Basic " + d.fetcher.Token)
+	dst.Header.Add("Authorization", "Basic "+d.fetcher.Token)
 }
 
 func FixLinkHeader(scheme, host, header string) (string, error) {
@@ -107,9 +107,9 @@ func FixLinkHeader(scheme, host, header string) (string, error) {
 
 		// Create a new url from various sources
 		newUrlPart := url.URL{
-			Scheme: scheme,
-			Host: host,
-			Path: urlPart.Path,
+			Scheme:   scheme,
+			Host:     host,
+			Path:     urlPart.Path,
 			RawQuery: urlPart.RawQuery,
 		}
 
@@ -134,6 +134,9 @@ func Run(fetcher *ecr_token.EcrFetcher) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", webHandlers.Handler)
+	mux.HandleFunc("/healthz", Healthz)
+	mux.HandleFunc("/readyz", webHandlers.Readyz)
+	mux.HandleFunc("/version", Version)
 	err := http.ListenAndServe(":8080", mux)
 	log.Fatal().Err(err).Msg("Running HTTP server on :8080")
 }

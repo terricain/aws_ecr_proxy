@@ -3,8 +3,8 @@ package ecr_token
 import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ecr"
-	"time"
 	"github.com/rs/zerolog/log"
+	"time"
 )
 
 type EcrClient interface {
@@ -13,12 +13,12 @@ type EcrClient interface {
 
 type EcrFetcher struct {
 	EcrClient EcrClient
-	Token string
+	Token     string
 	ExpiresAt time.Time
-	Endpoint string
+	Endpoint  string
 
 	closeChannel chan bool
-	closed bool
+	closed       bool
 }
 
 func New(ecrClient EcrClient) *EcrFetcher {
@@ -47,9 +47,9 @@ func (e *EcrFetcher) Run() {
 	}
 
 	// Logic here is un
-	runLoop:
+runLoop:
 	for {
-		expireTime := e.ExpiresAt.Add(- 15*time.Minute)
+		expireTime := e.ExpiresAt.Add(-15 * time.Minute)
 		needsRenew := time.Now().After(expireTime)
 
 		select {
@@ -64,7 +64,7 @@ func (e *EcrFetcher) Run() {
 			select {
 			case <-e.closeChannel:
 				break runLoop
-			case <-time.After(5*time.Minute):
+			case <-time.After(5 * time.Minute):
 				continue runLoop
 			}
 		}
@@ -91,7 +91,7 @@ func (e *EcrFetcher) Run() {
 			}
 
 			// Sleeping for a few seconds to prevent spamming the ECR API
-			<-time.After(15*time.Second)
+			<-time.After(15 * time.Second)
 			continue
 		}
 

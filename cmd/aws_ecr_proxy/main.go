@@ -3,13 +3,14 @@ package main
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
+	"github.com/rs/zerolog/log"
 	"github.com/terrycain/aws_ecr_proxy/internal/ecr_token"
 	"github.com/terrycain/aws_ecr_proxy/internal/proxy_server"
-	"github.com/rs/zerolog/log"
+	"github.com/terrycain/aws_ecr_proxy/internal/version"
 )
 
 func main() {
-	log.Info().Msg("Starting ECR Proxy")
+	log.Info().Str("version", version.VERSION).Str("build_date", version.BUILDDATE).Str("sha", version.SHA).Msg("Starting ECR Proxy")
 	awsSession, err := session.NewSession()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create an AWS session, check credentials")
