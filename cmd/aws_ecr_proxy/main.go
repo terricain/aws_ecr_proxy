@@ -20,9 +20,10 @@ func main() {
 	svc := ecr.New(awsSession)
 
 	// Instantiate our ecs token getter
-	result := ecr_token.New(svc)
-	go result.Run()
+	tokenFetcher := ecr_token.New(svc)
+	go tokenFetcher.Run()
+	defer tokenFetcher.Close()
 
 	// Pass reference to our refreshing token to the HTTP server
-	proxy_server.Run(result)
+	proxy_server.Run(tokenFetcher)
 }
