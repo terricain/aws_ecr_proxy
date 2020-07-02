@@ -6,4 +6,9 @@ The reason I created this was, FluxCD was not playing ball with ECR when ran out
 registries use for pagination, which results in Flux complaining about the registry requiring authentication.
 
 
-....todo  
+### Todo
+
+* Flesh out README
+* Add Env vars, HTTP host/port, log level, aws specifics
+* heathz and readyz endpoints for kubernetes
+* Tests :/
