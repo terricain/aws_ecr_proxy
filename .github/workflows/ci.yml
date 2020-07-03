@@ -92,3 +92,10 @@ jobs:
         uses: actions-hub/docker@master
         with:
           args: push terrycain/aws_ecr_proxy:${{ steps.get_version.outputs.version }}
+
+      - name: Push DockerHub description
+        uses: peter-evans/dockerhub-description@v2
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKERHUB_REPOSITORY: terrycain/aws_ecr_proxy

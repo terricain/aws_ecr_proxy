@@ -3,13 +3,22 @@ package main
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/terrycain/aws_ecr_proxy/internal/ecr_token"
 	"github.com/terrycain/aws_ecr_proxy/internal/proxy_server"
+	"github.com/terrycain/aws_ecr_proxy/internal/utils"
 	"github.com/terrycain/aws_ecr_proxy/internal/version"
 )
 
 func main() {
+	envLevel := utils.GetEnv("LOG_LEVEL", "INFO")
+	zerolog.SetGlobalLevel(utils.LogNameToLevel(envLevel))
+
+	host := utils.GetEnv("LISTEN_HOST", "0.0.0.0")
+	port := utils.GetEnv("LISTEN_HOST", "8080")
+	addr := host + ":" + port
+
 	log.Info().Str("version", version.VERSION).Str("build_date", version.BUILDDATE).Str("sha", version.SHA).Msg("Starting ECR Proxy")
 	awsSession, err := session.NewSession()
 	if err != nil {
@@ -26,5 +35,5 @@ func main() {
 	defer tokenFetcher.Close()
 
 	// Pass reference to our refreshing token to the HTTP server
-	proxy_server.Run(tokenFetcher)
+	proxy_server.Run(addr, tokenFetcher)
 }

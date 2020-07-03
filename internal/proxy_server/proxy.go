@@ -128,7 +128,7 @@ func FixLinkHeader(scheme, host, header string) (string, error) {
 	return linkHdr, nil
 }
 
-func Run(fetcher *ecr_token.EcrFetcher) {
+func Run(addr string, fetcher *ecr_token.EcrFetcher) {
 
 	webHandlers := WebData{fetcher: fetcher}
 
@@ -137,6 +137,7 @@ func Run(fetcher *ecr_token.EcrFetcher) {
 	mux.HandleFunc("/healthz", Healthz)
 	mux.HandleFunc("/readyz", webHandlers.Readyz)
 	mux.HandleFunc("/version", Version)
-	err := http.ListenAndServe(":8080", mux)
-	log.Fatal().Err(err).Msg("Running HTTP server on :8080")
+	log.Info().Msgf("Running HTTP server on %s", addr)
+	err := http.ListenAndServe(addr, mux)
+	log.Fatal().Err(err).Msg("Failed to run HTTP server")
 }
