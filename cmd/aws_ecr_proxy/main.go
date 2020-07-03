@@ -15,6 +15,7 @@ func main() {
 	envLevel := utils.GetEnv("LOG_LEVEL", "INFO")
 	zerolog.SetGlobalLevel(utils.LogNameToLevel(envLevel))
 
+	disableProxyHeaders := utils.GetEnv("DISABLE_PROXY_HEADERS", "false") == "true"
 	host := utils.GetEnv("LISTEN_HOST", "0.0.0.0")
 	port := utils.GetEnv("LISTEN_PORT", "8080")
 	addr := host + ":" + port
@@ -35,5 +36,5 @@ func main() {
 	defer tokenFetcher.Close()
 
 	// Pass reference to our refreshing token to the HTTP server
-	proxy_server.Run(addr, tokenFetcher)
+	proxy_server.Run(addr, disableProxyHeaders, tokenFetcher)
 }

@@ -1,7 +1,7 @@
 # AWS ECR Proxy
 
 Simple ECR proxy which manages AWS ECR authentication and handles the Link headers. 
-The container also has endpoints for Kubernetes liveness and readyness probes.
+The container also has endpoints for Kubernetes liveness and readiness probes.
 
 ### Usage
 
@@ -13,7 +13,7 @@ docker run -e AWS_REGION=eu-west-1 \
            -e AWS_SECRET_ACCESS_KEY=blah \
            -e AWS_ACCESS_KEY_ID=blah \
            --name registry --rm -i \
-            -p 8080:8080 terrycain/aws_ecr_proxy:latest
+           -p 8080:8080 terrycain/aws_ecr_proxy:latest
 ```
 
 #### Environment Variables
@@ -24,10 +24,18 @@ docker run -e AWS_REGION=eu-west-1 \
 * `LOG_LEVEL` - Default `INFO` - Sets the logging level, one of: `DEBUG`, `INFO`, `WARN`, `ERROR`
 * `LISTEN_PORT` - Default `8080`
 * `LISTEN_HOST` - Default `0.0.0.0`
+* `DISABLE_PROXY_HEADERS` - Default `false` - If set to `true` then the proxy will ignore `X-Forwarded-*` and `X-Real-IP` headers. The only time you would want to set this is if the proxy is not sad behind a reverse proxy. 
 
 This proxy uses the standard AWS SDK, so it is entirely possible the AWS specific environment variables 
 can be omitted and the proxy should attempt to authenticate using an appropriate IAM role, but this is untested.
 
+### Kubernetes
+
+Below is a Kubernetes deployment manifest, including annotations for flux to update the container using the semver matcher and including appropriate lifecycle probes. AWS access keys are passed in using Kubernetes secrets.
+
+```yaml
+TODOMANIFEST
+```
 
 ### How it works
 

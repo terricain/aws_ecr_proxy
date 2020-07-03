@@ -131,12 +131,14 @@ func FixLinkHeader(scheme, host, header string) (string, error) {
 	return linkHdr, nil
 }
 
-func Run(addr string, fetcher *ecr_token.EcrFetcher) {
+func Run(addr string, disableProxyHeaders bool, fetcher *ecr_token.EcrFetcher) {
 
 	webHandlers := WebData{fetcher: fetcher}
 
 	r := mux.NewRouter()
-	r.Use(handlers.ProxyHeaders)
+	if !disableProxyHeaders {
+		r.Use(handlers.ProxyHeaders)
+	}
 
 	r.HandleFunc("/", webHandlers.Handler)
 	r.HandleFunc("/healthz", Healthz)
