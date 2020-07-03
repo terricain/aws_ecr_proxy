@@ -43,6 +43,5 @@ registries use for pagination, which results in Flux complaining about the regis
 
 ### Todo
 
-* add support for x-forwarded-proto when sat behind a proxy
 * add support to listen with TLS
 * Tests :/

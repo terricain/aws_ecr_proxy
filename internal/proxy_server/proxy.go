@@ -7,6 +7,9 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 type WebData struct {
@@ -132,12 +135,14 @@ func Run(addr string, fetcher *ecr_token.EcrFetcher) {
 
 	webHandlers := WebData{fetcher: fetcher}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", webHandlers.Handler)
-	mux.HandleFunc("/healthz", Healthz)
-	mux.HandleFunc("/readyz", webHandlers.Readyz)
-	mux.HandleFunc("/version", Version)
+	r := mux.NewRouter()
+	r.Use(handlers.ProxyHeaders)
+
+	r.HandleFunc("/", webHandlers.Handler)
+	r.HandleFunc("/healthz", Healthz)
+	r.HandleFunc("/readyz", webHandlers.Readyz)
+	r.HandleFunc("/version", Version)
 	log.Info().Msgf("Running HTTP server on %s", addr)
-	err := http.ListenAndServe(addr, mux)
+	err := http.ListenAndServe(addr, r)
 	log.Fatal().Err(err).Msg("Failed to run HTTP server")
 }
