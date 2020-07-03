@@ -10,5 +10,6 @@ registries use for pagination, which results in Flux complaining about the regis
 
 * Flesh out README
 * Add Env vars, HTTP host/port, log level, aws specifics
-* heathz and readyz endpoints for kubernetes
+* Document
+* Push readme to dockerhub
 * Tests :/
