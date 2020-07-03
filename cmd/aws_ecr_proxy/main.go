@@ -16,7 +16,7 @@ func main() {
 	zerolog.SetGlobalLevel(utils.LogNameToLevel(envLevel))
 
 	host := utils.GetEnv("LISTEN_HOST", "0.0.0.0")
-	port := utils.GetEnv("LISTEN_HOST", "8080")
+	port := utils.GetEnv("LISTEN_PORT", "8080")
 	addr := host + ":" + port
 
 	log.Info().Str("version", version.VERSION).Str("build_date", version.BUILDDATE).Str("sha", version.SHA).Msg("Starting ECR Proxy")

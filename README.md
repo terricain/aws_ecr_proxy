@@ -9,7 +9,11 @@ The container also has endpoints for Kubernetes liveness and readyness probes.
 
 Example usage:
 ```bash
-docker run --rm -it -e AWS_REGION=eu-west-1 -e AWS_SECRET_ACCESS_KEY=blah -e AWS_ACCESS_KEY_ID=blah --name registry -p 8080:8080 terrycain/aws_ecr_proxy:latest
+docker run -e AWS_REGION=eu-west-1 \
+           -e AWS_SECRET_ACCESS_KEY=blah \
+           -e AWS_ACCESS_KEY_ID=blah \
+           --name registry --rm -i \
+            -p 8080:8080 terrycain/aws_ecr_proxy:latest
 ```
 
 #### Environment Variables
