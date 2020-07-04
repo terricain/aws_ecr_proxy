@@ -140,10 +140,10 @@ func Run(addr string, disableProxyHeaders bool, fetcher *ecr_token.EcrFetcher) {
 		r.Use(handlers.ProxyHeaders)
 	}
 
-	r.HandleFunc("/", webHandlers.Handler)
 	r.HandleFunc("/healthz", Healthz)
 	r.HandleFunc("/readyz", webHandlers.Readyz)
 	r.HandleFunc("/version", Version)
+	r.PathPrefix("/").HandlerFunc(webHandlers.Handler)
 	log.Info().Msgf("Running HTTP server on %s", addr)
 	err := http.ListenAndServe(addr, r)
 	log.Fatal().Err(err).Msg("Failed to run HTTP server")
