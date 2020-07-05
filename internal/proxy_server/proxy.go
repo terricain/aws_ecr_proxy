@@ -13,13 +13,8 @@ import (
 )
 
 type WebData struct {
-	fetcher *ecr_token.EcrFetcher
-}
-
-var HttpClient = http.Client{
-	CheckRedirect: func(req *http.Request, via []*http.Request) error {
-		return http.ErrUseLastResponse
-	},
+	fetcher    *ecr_token.EcrFetcher
+	httpClient *http.Client
 }
 
 func (d *WebData) Handler(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +38,7 @@ func (d *WebData) Handler(w http.ResponseWriter, r *http.Request) {
 	d.CopyHeaders(r, req)
 
 	// Do request
-	resp, err := HttpClient.Do(req)
+	resp, err := d.httpClient.Do(req)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to submit the outbound request object")
 		w.WriteHeader(500)
@@ -88,7 +83,6 @@ func (d *WebData) CopyHeaders(src *http.Request, dst *http.Request) {
 }
 
 func FixLinkHeader(scheme, host, header string) (string, error) {
-	// Link: <https://000000000000.dkr.ecr.eu-west-2.amazonaws.com/v2/test/tags/list?last=N8jylEwUlHaW6oTKiejfZD%2FAsrOJ0PVfMZA2Me%2F29xo93MTx2AYZCQtZKvYC%2BOMSXdFGYNbSIuuXVqd3ZTlRJfss8wqCyEXe%2BAoLor8QJib0ttd%2BR8t5Trj7R4gx7jtI6d04rCGjY9xIjWpZd9kSsT9iHmFJGYEl8rSHI4a9H%2Bp1MB%2F5leB4%2BQIkYHqidMnmJwZmFn3eZic46QvDdvdM9jXb3TkJFLUQbGxK9sMOHoJI1ELshF3LJiEidUR6SrAWDIfFfOUZlr1iWdS0EA5eGt9NNw9QKxXoXoq6afLMkeUdA8hP40MpiD7%2BUv1pr33fMgDivdTRztZvFUAyPC1%2Frx5j%2BAMt5LBCeeECAArsDC8%3D>; rel="next"
 	if scheme == "" {
 		scheme = "http"
 	}
@@ -133,7 +127,14 @@ func FixLinkHeader(scheme, host, header string) (string, error) {
 
 func Run(addr string, disableProxyHeaders bool, fetcher *ecr_token.EcrFetcher) {
 
-	webHandlers := WebData{fetcher: fetcher}
+	webHandlers := WebData{
+		fetcher: fetcher,
+		httpClient: &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		},
+	}
 
 	r := mux.NewRouter()
 	if !disableProxyHeaders {

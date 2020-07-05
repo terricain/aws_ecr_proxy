@@ -30,7 +30,7 @@ func Version(w http.ResponseWriter, r *http.Request) {
 		log.Error().Err(err).Msg("Failed to convert version info to JSON")
 		w.WriteHeader(500)
 	} else {
-		w.WriteHeader(500)
+		w.WriteHeader(200)
 		_, _ = w.Write(jsonBytes)
 	}
 }
