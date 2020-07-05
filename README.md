@@ -52,4 +52,4 @@ registries use for pagination, which results in Flux complaining about the regis
 ### Todo
 
 * add support to listen with TLS
-* Tests :/
+* request logging
