@@ -13,12 +13,12 @@ docker run -e AWS_REGION=eu-west-1 \
            -e AWS_SECRET_ACCESS_KEY=blah \
            -e AWS_ACCESS_KEY_ID=blah \
            --name registry --rm -i \
-           -p 8080:8080 terrycain/aws_ecr_proxy:latest
+           -p 8080:8080 terricain/aws_ecr_proxy:latest
 ```
 
 #### Environment Variables
 
-* `AWS_REGION` - Confiures the AWS SDK's region. This will determine which regions ECR images are available
+* `AWS_REGION` - Configures the AWS SDK's region. This will determine which regions ECR images are available
 * `AWS_ACCESS_KEY_ID` - AWS Access Key
 * `AWS_SECRET_ACCESS_KEY` - AWS Secret Key
 * `LOG_LEVEL` - Default `INFO` - Sets the logging level, one of: `DEBUG`, `INFO`, `WARN`, `ERROR`

@@ -1,14 +1,17 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ecr"
+	"context"
+	"time"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/terrycain/aws_ecr_proxy/internal/ecr_token"
-	"github.com/terrycain/aws_ecr_proxy/internal/proxy_server"
-	"github.com/terrycain/aws_ecr_proxy/internal/utils"
-	"github.com/terrycain/aws_ecr_proxy/internal/version"
+	"github.com/terricain/aws_ecr_proxy/internal/ecr_token"
+	"github.com/terricain/aws_ecr_proxy/internal/proxy_server"
+	"github.com/terricain/aws_ecr_proxy/internal/utils"
+	"github.com/terricain/aws_ecr_proxy/internal/version"
 )
 
 func main() {
@@ -21,14 +24,17 @@ func main() {
 	addr := host + ":" + port
 
 	log.Info().Str("version", version.VERSION).Str("build_date", version.BUILDDATE).Str("sha", version.SHA).Msg("Starting ECR Proxy")
-	awsSession, err := session.NewSession()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create an AWS session, check credentials")
 		panic(err)
 	}
 
-	// Create an ECR client
-	svc := ecr.New(awsSession)
+	svc := ecr.NewFromConfig(cfg)
 
 	// Instantiate our ecs token getter
 	tokenFetcher := ecr_token.New(svc)

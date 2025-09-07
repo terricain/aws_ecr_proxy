@@ -3,7 +3,7 @@ package proxy_server
 import (
 	"encoding/json"
 	"github.com/rs/zerolog/log"
-	"github.com/terrycain/aws_ecr_proxy/internal/version"
+	"github.com/terricain/aws_ecr_proxy/internal/version"
 	"net/http"
 )
 

@@ -2,7 +2,7 @@ package proxy_server
 
 import (
 	"encoding/json"
-	"github.com/terrycain/aws_ecr_proxy/internal/ecr_token"
+	"github.com/terricain/aws_ecr_proxy/internal/ecr_token"
 	"net/http"
 	"net/http/httptest"
 	"testing"

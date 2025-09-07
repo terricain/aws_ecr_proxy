@@ -1,11 +1,14 @@
 package ecr_token
 
 import (
-	"github.com/aws/aws-sdk-go/service/ecr"
-	"github.com/rs/zerolog"
+	"context"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
+	"github.com/rs/zerolog"
 )
 
 func TestMain(m *testing.M) {
@@ -19,8 +22,8 @@ type MockEcr struct {
 	respErr error
 }
 
-func (m *MockEcr) GetAuthorizationToken(input *ecr.GetAuthorizationTokenInput) (*ecr.GetAuthorizationTokenOutput, error) {
-	m.req = input
+func (m *MockEcr) GetAuthorizationToken(ctx context.Context, params *ecr.GetAuthorizationTokenInput, optFns ...func(*ecr.Options)) (*ecr.GetAuthorizationTokenOutput, error) {
+	m.req = params
 	return m.resp, m.respErr
 }
 
@@ -37,7 +40,7 @@ func TestFetch(t *testing.T) {
 	token := "test1234"
 	expire := time.Now().Add(5 * time.Hour)
 	endpoint := "https://ecrendpoint"
-	mockEcr := &MockEcr{resp: &ecr.GetAuthorizationTokenOutput{AuthorizationData: []*ecr.AuthorizationData{
+	mockEcr := &MockEcr{resp: &ecr.GetAuthorizationTokenOutput{AuthorizationData: []types.AuthorizationData{
 		{
 			AuthorizationToken: &token,
 			ExpiresAt:          &expire,

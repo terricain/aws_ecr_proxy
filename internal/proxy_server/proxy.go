@@ -1,12 +1,14 @@
 package proxy_server
 
 import (
-	"github.com/peterhellberg/link"
-	"github.com/rs/zerolog/log"
-	"github.com/terrycain/aws_ecr_proxy/internal/ecr_token"
 	"io"
 	"net/http"
 	"net/url"
+	"time"
+
+	"github.com/peterhellberg/link"
+	"github.com/rs/zerolog/log"
+	"github.com/terricain/aws_ecr_proxy/internal/ecr_token"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -18,6 +20,8 @@ type WebData struct {
 }
 
 func (d *WebData) Handler(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
 	if len(d.fetcher.Token) == 0 || len(d.fetcher.Endpoint) == 0 {
 		log.Error().Msg("ECR token missing, this is generally not good")
 		w.WriteHeader(500)
@@ -65,7 +69,10 @@ func (d *WebData) Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(resp.StatusCode)
 
 	// Copy response body to http response
-	_, _ = io.Copy(w, resp.Body)
+	size, _ := io.Copy(w, resp.Body)
+	dur := time.Since(start)
+
+	log.Info().Str("method", r.Method).Stringer("url", r.URL).Int("status", resp.StatusCode).Int64("size", size).Dur("duration_ms", dur).Msg("")
 }
 
 func (d *WebData) CopyHeaders(src *http.Request, dst *http.Request) {

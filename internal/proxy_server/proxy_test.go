@@ -2,7 +2,7 @@ package proxy_server
 
 import (
 	"bytes"
-	"github.com/terrycain/aws_ecr_proxy/internal/ecr_token"
+	"github.com/terricain/aws_ecr_proxy/internal/ecr_token"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"

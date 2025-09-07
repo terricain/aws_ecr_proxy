@@ -1,14 +1,15 @@
 package ecr_token
 
 import (
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/ecr"
-	"github.com/rs/zerolog/log"
+	"context"
 	"time"
+
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
+	"github.com/rs/zerolog/log"
 )
 
 type EcrClient interface {
-	GetAuthorizationToken(input *ecr.GetAuthorizationTokenInput) (*ecr.GetAuthorizationTokenOutput, error)
+	GetAuthorizationToken(ctx context.Context, params *ecr.GetAuthorizationTokenInput, optFns ...func(*ecr.Options)) (*ecr.GetAuthorizationTokenOutput, error)
 }
 
 type EcrFetcher struct {
@@ -71,24 +72,9 @@ runLoop:
 
 		log.Info().Msg("Getting ECR credential")
 
-		input := &ecr.GetAuthorizationTokenInput{}
-
-		result, err := e.EcrClient.GetAuthorizationToken(input)
+		result, err := getECRToken(e.EcrClient)
 		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				case ecr.ErrCodeServerException:
-					log.Error().Err(aerr).Msg("AWS SKD ServerException")
-				case ecr.ErrCodeInvalidParameterException:
-					log.Error().Err(aerr).Msg("AWS SKD InvalidParameterException")
-				default:
-					log.Error().Err(aerr).Msg("Failed to get ECR token")
-				}
-			} else {
-				// Print the error, cast err to awserr.Error to get the Code and
-				// Message from an error.
-				log.Error().Err(err).Msg("Failed to get ECR token")
-			}
+			log.Error().Err(err).Msg("Failed to get ECR token")
 
 			// Sleeping for a few seconds to prevent spamming the ECR API
 			<-time.After(15 * time.Second)
@@ -103,4 +89,12 @@ runLoop:
 	}
 
 	e.closeChannel <- true
+}
+
+func getECRToken(ecrClient EcrClient) (*ecr.GetAuthorizationTokenOutput, error) {
+	// Split into a function to scope context timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	return ecrClient.GetAuthorizationToken(ctx, &ecr.GetAuthorizationTokenInput{})
 }
