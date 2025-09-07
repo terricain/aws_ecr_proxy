@@ -2,11 +2,12 @@ package proxy_server
 
 import (
 	"bytes"
-	"github.com/terricain/aws_ecr_proxy/internal/ecr_token"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/terricain/aws_ecr_proxy/internal/ecr_token"
 )
 
 func TestFixLinkHeader(t *testing.T) {
@@ -76,7 +77,7 @@ func TestHandler(t *testing.T) {
 
 			return &http.Response{
 				StatusCode: 234,
-				Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
+				Body:       io.NopCloser(bytes.NewBufferString(`OK`)),
 				Header: http.Header{
 					"Data": {"test1"},
 					"Link": {"<https://000000000000.dkr.ecr.eu-west-2.amazonaws.com/v2/test/tags/list?last=somekey>; rel=\"next\""},

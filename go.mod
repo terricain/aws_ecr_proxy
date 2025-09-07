@@ -5,7 +5,6 @@ go 1.24
 toolchain go1.24.5
 
 require (
-	github.com/aws/aws-sdk-go v1.33.0
 	github.com/aws/aws-sdk-go-v2/config v1.31.6
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.50.1
 	github.com/gorilla/handlers v1.4.2
@@ -27,7 +26,4 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.34.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.2 // indirect
 	github.com/aws/smithy-go v1.23.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/jmespath/go-jmespath v0.3.0 // indirect
-	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
