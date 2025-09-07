@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.22.4-alpine3.20 AS build
+FROM --platform=$BUILDPLATFORM golang:1.24.7-alpine3.22 AS build
 
 WORKDIR /usr/local/go/src/aws_ecr_proxy
 
