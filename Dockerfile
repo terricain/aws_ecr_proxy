@@ -7,7 +7,7 @@ COPY go.mod go.sum /usr/local/go/src/aws_ecr_proxy/
 RUN go mod download
 
 COPY cmd/ /usr/local/go/src/aws_ecr_proxy/cmd/
-COPY pkg/ /usr/local/go/src/aws_ecr_proxy/internal/
+COPY internal/ /usr/local/go/src/aws_ecr_proxy/internal/
 
 ENV PKG=github.com/terricain/aws_ecr_proxy
 ARG DOCKER_METADATA_OUTPUT_JSON
